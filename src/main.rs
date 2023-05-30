@@ -1,3 +1,4 @@
 fn main() {
-    println!("Hello, world!");
+    let tuple = ("hola", "hola");
+    println!("Hello, world! {}", tuple.0);
 }
