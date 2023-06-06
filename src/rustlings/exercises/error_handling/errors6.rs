@@ -1,40 +1,29 @@
-// errors6.rs
-
-// Using catch-all error types like `Box<dyn error::Error>` isn't recommended
-// for library code, where callers might want to make decisions based on the
-// error content, instead of printing it out or propagating it further. Here,
-// we define a custom error type to make it possible for callers to decide
-// what to do next when our function returns an error.
-
-// Execute `rustlings hint errors6` or use the `hint` watch subcommand for a hint.
-
-// I AM NOT DONE
-
 use std::num::ParseIntError;
 
-// This is a custom error type that we will be using in `parse_pos_nonzero()`.
+// Definición del tipo de error personalizado.
 #[derive(PartialEq, Debug)]
 enum ParsePosNonzeroError {
-    Creation(CreationError),
-    ParseInt(ParseIntError),
+    Creation(CreationError), // Error de creación
+    ParseInt(ParseIntError), // Error de análisis de enteros
 }
 
 impl ParsePosNonzeroError {
+    // Función de conversión de errores de creación a ParsePosNonzeroError
     fn from_creation(err: CreationError) -> ParsePosNonzeroError {
         ParsePosNonzeroError::Creation(err)
     }
-    // TODO: add another error conversion function here.
-    // fn from_parseint...
+
+    // Función de conversión de errores de análisis de enteros a ParsePosNonzeroError
+    fn from_parseint(err: ParseIntError) -> ParsePosNonzeroError {
+        ParsePosNonzeroError::ParseInt(err)
+    }
 }
 
+// Función que intenta analizar un número de tipo PositiveNonzeroInteger a partir de una cadena.
 fn parse_pos_nonzero(s: &str) -> Result<PositiveNonzeroInteger, ParsePosNonzeroError> {
-    // TODO: change this to return an appropriate error instead of panicking
-    // when `parse()` returns an error.
-    let x: i64 = s.parse().unwrap();
-    PositiveNonzeroInteger::new(x).map_err(ParsePosNonzeroError::from_creation)
+    let x: i64 = s.parse().map_err(ParsePosNonzeroError::from_parseint)?; // Intentar analizar el entero y convertir el error a ParsePosNonzeroError
+    PositiveNonzeroInteger::new(x).map_err(ParsePosNonzeroError::from_creation) // Crear un PositiveNonzeroInteger a partir del entero y convertir cualquier error de creación a ParsePosNonzeroError
 }
-
-// Don't change anything below this line.
 
 #[derive(PartialEq, Debug)]
 struct PositiveNonzeroInteger(u64);
@@ -46,22 +35,22 @@ enum CreationError {
 }
 
 impl PositiveNonzeroInteger {
+    // Función que crea un PositiveNonzeroInteger a partir de un entero
     fn new(value: i64) -> Result<PositiveNonzeroInteger, CreationError> {
         match value {
-            x if x < 0 => Err(CreationError::Negative),
-            x if x == 0 => Err(CreationError::Zero),
-            x => Ok(PositiveNonzeroInteger(x as u64)),
+            x if x < 0 => Err(CreationError::Negative), // Valor negativo, error de creación Negative
+            x if x == 0 => Err(CreationError::Zero),    // Valor cero, error de creación Zero
+            x => Ok(PositiveNonzeroInteger(x as u64)), // Valor positivo, crea un PositiveNonzeroInteger válido
         }
     }
 }
-
 #[cfg(test)]
 mod test {
     use super::*;
 
     #[test]
     fn test_parse_error() {
-        // We can't construct a ParseIntError, so we have to pattern match.
+        // Se puede cambiar la entrada para probar otros casos de error de análisis.
         assert!(matches!(
             parse_pos_nonzero("not a number"),
             Err(ParsePosNonzeroError::ParseInt(_))
@@ -86,6 +75,7 @@ mod test {
 
     #[test]
     fn test_positive() {
+        // Se puede cambiar el número de prueba para verificar otros casos válidos.
         let x = PositiveNonzeroInteger::new(42);
         assert!(x.is_ok());
         assert_eq!(parse_pos_nonzero("42"), Ok(x.unwrap()));

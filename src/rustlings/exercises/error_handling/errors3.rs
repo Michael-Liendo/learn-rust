@@ -4,7 +4,6 @@
 // Why not? What should we do to fix it?
 // Execute `rustlings hint errors3` or use the `hint` watch subcommand for a hint.
 
-// I AM NOT DONE
 use std::num::ParseIntError;
 
 fn main() -> Result<(), ParseIntError> {
