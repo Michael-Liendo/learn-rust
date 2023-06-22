@@ -1,6 +1,5 @@
-use std::io;
-
 use rand::Rng;
+use std::io;
 
 fn main() {
     let characters =
@@ -8,7 +7,7 @@ fn main() {
 
     let mut password_length = String::new();
 
-    println!("Enter a password length");
+    println!("Enter a password characters length:");
 
     let _ = io::stdin().read_line(&mut password_length);
 
@@ -21,6 +20,5 @@ fn main() {
 
         password.push(char)
     }
-
-    println!("{}", password)
+    println!("{}", password);
 }
